@@ -1,7 +1,10 @@
-import { type } from "express/lib/response";
 import mongoose, { Schema } from "mongoose";
 
 const subscritionSchema=new Schema({
+    _id: {
+        type: String,
+        required: true
+    },
     subscriber:{
         type: Schema.Types.ObjectId,
         ref: "User"

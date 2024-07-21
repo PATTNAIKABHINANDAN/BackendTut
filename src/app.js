@@ -20,8 +20,10 @@ app.use(cookieParser());  // This should be used directly, not express.cookiePar
 
 // routes import
 import userRouter from './routes/user.routes.js';
+import subsciptionRoute from './routes/subscription.route.js';
 
 // routes declaration
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/subscribe", subsciptionRoute);
 
 export { app };
