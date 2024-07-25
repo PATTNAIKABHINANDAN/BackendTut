@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary"
-import { response } from "express";
 import fs from "fs"
+import mime from "mime-types";
 
 
 
@@ -11,25 +11,30 @@ cloudinary.config({
 });
 
 const uploadCLoudinary = async (localFilePath) => {
-    // console.log(`${process.env.CLOUDINARY_API_SECRET}`)
     try {
-        if (!localFilePath){
+        if (!localFilePath){ 
             throw new Error("Local file path is required");
         }
         // console.log("local",localFilePath)
+        const mimeType = mime.lookup(localFilePath);
+        // console.log(mimeType);
+        const isVideo = mimeType && mimeType.startsWith("video");
+
+
         // Upload file to Cloudinary
         const uploadResult = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto",
+            folder: (isVideo?"videos":"photos")
         });
 
         console.log("File uploaded to Cloudinary");
 
         // Delete the local file after a successful upload
         if (fs.existsSync(localFilePath)) {
-            // fs.unlinkSync(localFilePath);
+            fs.unlinkSync(localFilePath);
             console.log("Local file deleted");
         }
-        console.log(uploadResult);
+
         return uploadResult
     } catch (error) {
         console.error(`Error uploading to Cloudinary: ${error.message}`);
