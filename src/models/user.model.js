@@ -33,8 +33,15 @@ import bcrypt from "bcrypt"
     },
     watchHistory:[
         {
-            type:Schema.Types.ObjectId,
-            ref:"Video"
+            video: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Video',
+                required: true
+            },
+            watchedAt: {
+                type: Date,
+                default: Date.now
+            }
         }
     ],
     password:{

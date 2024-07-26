@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { logoutUser, loginUser, registerUser, refreshAccessToken, changeCurrentPass, getCurrentUser, updateAccountDetails, updateUserAvatar, updateUserCoverImage, getUserChannelProfile, getWatchHistory } from "../controllers/user.controller.js"
+import { addWatchHistory } from "../controllers/watchVideo.controller.js";
 import { upload } from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router()
@@ -33,7 +34,8 @@ router.route("/cover-image").patch(verifyJWT, upload.single("coverImage"), updat
 router.route("/c/:username").get(verifyJWT, getUserChannelProfile)
 router.route("/history").get(verifyJWT, getWatchHistory)
 
-
+// common routes
+router.route("/watch-video").post(addWatchHistory)
 
 
 export default router

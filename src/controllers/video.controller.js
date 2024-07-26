@@ -108,7 +108,7 @@ const isPublished = asyncHandler(async (req, res) => {
         const decodedToken = await decodeToken(accessToken);
         const userId = decodedToken._id
 
-        const video = await Video.findByIdAndUpdate(
+        const video = await Video?.findByIdAndUpdate(
             { _id: videoId, owner: userId },
             {
                 $set: {
@@ -118,7 +118,7 @@ const isPublished = asyncHandler(async (req, res) => {
             { new: true }
         );
         if (!video) {
-            throw new ApiError(406, "video can't be published.")
+            throw new ApiError(406, "video couldn't be published.")
         }
 
         console.log(video)
@@ -128,9 +128,7 @@ const isPublished = asyncHandler(async (req, res) => {
     }
 })
 
-const viewsCount=asyncHandler(async (req, res)=>{
-    
-})
 
 
-export { newVideo, isPublished, viewsCount}
+
+export { newVideo, isPublished}
