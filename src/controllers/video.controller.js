@@ -128,7 +128,32 @@ const isPublished = asyncHandler(async (req, res) => {
     }
 })
 
+const editVideoDesc = asyncHandler(async (req, res) => {
+    const { videoId, newTitle, newDescription, newThumbnail } = req.body;
+
+    const updateFields = {};
+    
+    if (newTitle !== undefined && newTitle !== null) {
+        updateFields.title = newTitle;
+    }
+    
+    if (newDescription !== undefined && newDescription !== null) {
+        updateFields.description = newDescription;
+    }
+    
+    if (newThumbnail !== undefined && newThumbnail !== null) {
+        updateFields.thumbnail = newThumbnail;
+    }
+    console.log(updateFields)
+    let video = await Video.findByIdAndUpdate(
+        videoId,
+        { $set: updateFields },
+        { new: true }
+    );
+
+    return res.status(200).json(new ApiResponse(200, video, "Updated successfully..."));
+});
 
 
 
-export { newVideo, isPublished}
+export { newVideo, isPublished, editVideoDesc }

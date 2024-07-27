@@ -1,4 +1,4 @@
-import { newVideo, isPublished } from "../controllers/video.controller.js"
+import { newVideo, isPublished, editVideoDesc } from "../controllers/video.controller.js"
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js"
 
@@ -13,6 +13,7 @@ router.route("/new-video").post(
     },
 ]),newVideo)
 router.route("/publish").post(isPublished)
+router.route("/edit-video").post(editVideoDesc)
 
 
 export default router
