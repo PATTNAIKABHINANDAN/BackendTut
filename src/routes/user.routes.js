@@ -35,7 +35,7 @@ router.route("/c/:username").get(verifyJWT, getUserChannelProfile)
 router.route("/history").get(verifyJWT, getWatchHistory)
 
 // common routes
-router.route("/watch-video").post(addWatchHistory)
+router.route("/watch-video").post(verifyJWT,addWatchHistory)
 
 
 export default router

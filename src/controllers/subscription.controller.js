@@ -3,18 +3,6 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { Subsciption } from "../models/subscription.model.js"
 
-function decodeToken(token) {
-    try {
-        const parts = token.split('.');
-        const payload = Buffer.from(parts[1], 'base64').toString('utf-8');
-        const decodedPayload = JSON.parse(payload);
-        return decodedPayload;
-    } catch (error) {
-        console.error('Error decoding token:', error);
-        return null;
-    }
-}
-
 const subscribe = asyncHandler(async (req, res) => {
     try {
         const { channel } = req.body;
@@ -22,9 +10,7 @@ const subscribe = asyncHandler(async (req, res) => {
             throw new ApiError(400, `channel is required`);
         }
 
-        const accessToken = req.cookies?.accessToken
-        const decodedToken = await decodeToken(accessToken);
-        const subscriber = decodedToken._id
+        const subscriber = req.user?._id
 
         const subscriber_channel = `${subscriber}_${channel}`;
         const existSubscription = await Subsciption.findById(subscriber_channel);
@@ -57,10 +43,7 @@ const subscribe = asyncHandler(async (req, res) => {
 const unSubscribe = asyncHandler(async (req, res) => {
     const { videoId } = req.body;
 
-    const accessToken = req.cookies?.accessToken
-    const decodedToken = await decodeToken(accessToken);
-    const user = decodedToken._id
-
+    const user = req.user?._id
     const deletedSubscription = await Subsciption.deleteOne({
         subscriber: user,
         channel: videoId

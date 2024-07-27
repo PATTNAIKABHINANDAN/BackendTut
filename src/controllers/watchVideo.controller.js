@@ -13,26 +13,12 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 
-function decodeToken(token) {
-    try {
-        const parts = token.split('.');
-        const payload = Buffer.from(parts[1], 'base64').toString('utf-8');
-        const decodedPayload = JSON.parse(payload);
-        return decodedPayload;
-    } catch (error) {
-        console.error('Error decoding token:', error);
-        return null;
-    }
-}
-
 
 const addWatchHistory = asyncHandler(async (req, res) => {
     try {
         const { videoId } = req.body
 
-        const accessToken = req.cookies?.accessToken
-        const decodedToken = await decodeToken(accessToken);
-        const owner = decodedToken._id
+        const owner = req.user?._id
         
         const watchHistory = await User?.findByIdAndUpdate(
             owner,

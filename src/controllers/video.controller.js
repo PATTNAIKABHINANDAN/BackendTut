@@ -13,19 +13,6 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 
-function decodeToken(token) {
-    try {
-        const parts = token.split('.');
-        const payload = Buffer.from(parts[1], 'base64').toString('utf-8');
-        const decodedPayload = JSON.parse(payload);
-        return decodedPayload;
-    } catch (error) {
-        console.error('Error decoding token:', error);
-        return null;
-    }
-}
-
-
 const newVideo = asyncHandler(async (req, res) => {
     try {
         const { thumbnail, title, description, isPublished = true } = req.body
@@ -40,7 +27,7 @@ const newVideo = asyncHandler(async (req, res) => {
         if (existed) {
             throw new ApiError(409, "Video with thumbnail or title exist")
         }
-
+        
 
         // VIDEO FILE
         const videoFilePath = req.files.videoFile[0].path;
@@ -62,9 +49,7 @@ const newVideo = asyncHandler(async (req, res) => {
 
 
         // OWNER
-        const accessToken = req.cookies?.accessToken
-        const decodedToken = await decodeToken(accessToken);
-        const owner = decodedToken._id
+        const owner = req.user?._id
         console.log(owner);
 
 
@@ -90,6 +75,7 @@ const newVideo = asyncHandler(async (req, res) => {
             new ApiResponse(200, createdVideo, "Video successfully uploaded")
         );
     } catch (error) {
+        console.log(error);
         throw new ApiError(500, "something went wrong while adding new video")
     }
 })
@@ -104,9 +90,7 @@ const isPublished = asyncHandler(async (req, res) => {
             throw new ApiError(400, "required video not found")
         }
 
-        const accessToken = req.cookies?.accessToken
-        const decodedToken = await decodeToken(accessToken);
-        const userId = decodedToken._id
+        const userId = req.user?._id
 
         const video = await Video?.findByIdAndUpdate(
             { _id: videoId, owner: userId },
@@ -124,6 +108,7 @@ const isPublished = asyncHandler(async (req, res) => {
         console.log(video)
         return res.status(200).json(new ApiResponse(200, video, "Published successfully..."))
     } catch (error) {
+        console.log(error)
         throw new ApiError(401, "Error in publishing video")
     }
 })
