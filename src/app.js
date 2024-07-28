@@ -22,10 +22,13 @@ app.use(cookieParser());  // This should be used directly, not express.cookiePar
 import userRouter from './routes/user.routes.js';
 import subsciptionRoute from './routes/subscription.routes.js';
 import videoRoute from './routes/video.routes.js';
+import playlistRoute from './routes/playlist.routes.js'
+
 
 // routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/subscribe", subsciptionRoute);
 app.use("/api/v1/video", videoRoute);
+app.use("/api/v1/playlist", playlistRoute)
 
 export { app };

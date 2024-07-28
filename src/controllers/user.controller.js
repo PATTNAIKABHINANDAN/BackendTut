@@ -6,8 +6,8 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
 import express from 'express'
-import bodyParser from'body-parser'
-import cookieParser from'cookie-parser'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
 
 const app = express();
 
@@ -187,7 +187,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         if (!user) {
             throw new ApiError(401, "Invalid refresh token");
         }
-        console.log(incomingRefreshToken," --------- ",user?.refreshToken)
+        console.log(incomingRefreshToken, " --------- ", user?.refreshToken)
         if (incomingRefreshToken !== user?.refreshToken) {
             throw new ApiError(401, "Refresh token has expired or used");
         }
@@ -198,7 +198,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         };
 
         const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
-        console.log("new-refresh Token: ",refreshToken)
+        console.log("new-refresh Token: ", refreshToken)
         return res.status(200).cookie("accessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
             .json(
                 new ApiResponse(200, { accessToken, refreshToken }, "Access token refreshed")
@@ -210,9 +210,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 
 const changeCurrentPass = asyncHandler(async (req, res) => {
-    const { oldPassword, newPassword, confirmPass} = req.body
+    const { oldPassword, newPassword, confirmPass } = req.body
 
-    if(confirmPass!==newPassword)throw new ApiError(400,"confirm Pass and new pass are not equal")
+    if (confirmPass !== newPassword) throw new ApiError(400, "confirm Pass and new pass are not equal")
 
     const user = await User.findById(req.user?._id)
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
@@ -308,7 +308,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 foreignField: "channel",
                 as: "subscribers"
             }
-        }, 
+        },
         {
             $lookup: {
                 from: "subsciptions",
@@ -348,14 +348,14 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         }
     ])
 
-    if(!channel?.length){
-        throw new ApiError(404,"channel does not exists") 
+    if (!channel?.length) {
+        throw new ApiError(404, "channel does not exists")
     }
 
-    return res.status(200).json(new ApiResponse(200,channel[0],"User Channel fetched successfully"))
+    return res.status(200).json(new ApiResponse(200, channel[0], "User Channel fetched successfully"))
 })
 
-const getWatchHistory = asyncHandler(async(req, res) => {
+const getWatchHistory = asyncHandler(async (req, res) => {
     const user = await User.aggregate([
         {
             $match: {
@@ -387,8 +387,8 @@ const getWatchHistory = asyncHandler(async(req, res) => {
                         }
                     },
                     {
-                        $addFields:{
-                            owner:{
+                        $addFields: {
+                            owner: {
                                 $first: "$owner"
                             }
                         }
@@ -399,14 +399,14 @@ const getWatchHistory = asyncHandler(async(req, res) => {
     ])
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(
-            200,
-            user[0].watchHistory,
-            "Watch history fetched successfully"
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                user[0].watchHistory,
+                "Watch history fetched successfully"
+            )
         )
-    )
 })
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentPass, getCurrentUser, updateAccountDetails, updateUserAvatar, updateUserCoverImage, getUserChannelProfile, getWatchHistory}
+export { registerUser, loginUser, logoutUser, refreshAccessToken, changeCurrentPass, getCurrentUser, updateAccountDetails, updateUserAvatar, updateUserCoverImage, getUserChannelProfile, getWatchHistory }
