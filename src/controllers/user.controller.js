@@ -49,36 +49,33 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, "User with email or username exist")
     }
 
-    // console.log("req.files",req.files.avatar[0].path);
-    const avatarLocalPath = req.files.avatar[0].path;
-    // console.log(avatarLocalPath);
-
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar file is required")
+    // avatar upload system
+    let avatar;
+    console.log("req.files --- ",req.files);
+    if (req.files && Array.isArray(req.files.avatar) && req.files.avatar[0].path!=="") {
+        const avatarLocalPath = req.files.avatar[0].path;
+        // console.log(avatarLocalPath);
+        if (!avatarLocalPath) {
+            throw new ApiError(400, "Avatar file is required")
+        }
+        // upload avatar on cloud
+        avatar = await uploadCLoudinary(avatarLocalPath)
     }
 
-    // upload avatar on cloud
-    const avatar = await uploadCLoudinary(avatarLocalPath)
-    let coverImagePath;
-    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
-        coverImagePath = req.field.coverImage[0].path
+    let coverImage;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage[0].path!=="") {
+        let coverImagePath = req.field.coverImage[0].path
+        console.log("coverImg", coverImagePath)
+        coverImage = await uploadCLoudinary(coverImagePath)
     }
 
-
-    // console.log("coverImg",coverImagePath)
-    const coverImage = await uploadCLoudinary(coverImagePath)
-    // console.log(!avatar, "---", !coverImage)
-    if (!avatar) {
-        throw new ApiError(400, "Avatar file is required")
-    }
-
-    console.log(fullname, email, username, password,)
+    console.log(fullname, email, username, password)
 
     // enter details to db 
     const user = await User.create({
         username: username.toLowerCase(),
         fullname,
-        avatar: avatar?.url,
+        avatar: avatar?.url || "",
         coverImage: coverImage?.url || "",
         password,
         email,

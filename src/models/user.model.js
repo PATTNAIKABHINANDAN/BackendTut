@@ -25,8 +25,7 @@ import bcrypt from "bcrypt"
         index:true
     },
     avatar:{
-        type:String, // cloudinary url
-        required:true
+        type:String, 
     },
     coverImage:{
         type:String
